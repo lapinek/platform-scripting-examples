@@ -1,0 +1,22 @@
+{
+  "name": "platform-scripting-examples",
+  "version": "0.1.0",
+  "description": "Random scripting examples for use in the ForgeRock Platform products. ",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lapinek/platform-scripting-examples.git"
+  },
+  "keywords": [
+    "ForgeRock",
+    "scripting"
+  ],
+  "author": "Konstantin Lapine",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lapinek/platform-scripting-examples/issues"
+  },
+  "homepage": "https://github.com/lapinek/platform-scripting-examples#readme"
+}
