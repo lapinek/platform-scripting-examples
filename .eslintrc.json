@@ -42,6 +42,7 @@
         "transientState": "readonly",
         "idRepository": "readonly",
         "outcome": "writable",
-        "clientProperties": "readonly"
+        "clientProperties": "readonly",
+        "requestHeaders": "readonly"
     }
 }
