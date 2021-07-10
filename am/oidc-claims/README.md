@@ -10,7 +10,7 @@
 
     Therefore, maintaining a user session at the OP via the back channel, silently, may need to be implemented without reliance on the OP's session cookies.
 
-    In AM, the session information could be available in the context of the OIDC Claims script, which runs when ID token claims are being processed. Thus, the session information could be included in a custom ID token claim.
+    In AM, the session information could be accessible in the context of the OIDC Claims script, which runs when ID token claims are being processed. Thus, the session information could be included in a custom ID token claim.
 
     The session context in the script is provided via the `session` binding, which represents an instance of the [SSOToken](https://backstage.forgerock.com/docs/am/7.1/apidocs/com/iplanet/sso/SSOToken.html) class.
 
@@ -19,6 +19,8 @@
     ### Trusted Relying Party (RP)
 
     In these conditions, a _trusted_ RP application running in a different domain could maintain a (CTS-Based) user session at AM by providing the SSO token in a REST call to the [/json/sessions/](https://backstage.forgerock.com/docs/am/7.1/sessions-guide/managing-sessions-REST.html) endpoint.
+
+    > To make this call silently from a browser, via an XHR request, you will need to add the session token header name (typically, iPlanetDirectoryPro) to the accepted headers in your CORS service configuration, in the AM console > CONFIGURE > Global Services > CORS Service > Secondary Configurations > _CORS configuration name_ > Accepted Headers.
 
     The SSO token could be obtained from the `session` object with its `getTokenID()` method.
 
@@ -30,13 +32,13 @@
 
     ### Untrusted RP
 
-    A "true" third-party application, belonging to a business entity different than the one maintaining the resource server, should not have access to the user's SSO token.
+    An untrusted third-party application, belonging to a business entity different from the one maintaining the authorization server, should not have access to the user's SSO token.
 
-    _If/when_ the `session` binding were defined every time the ID token is issued and the user session is not terminated, presence of a claim based on the session information could serve as an indication of active user session for the RP, and this could be used by the RP to effect the single sign out functionality.
+    _If/when_ the `session` binding were defined every time the ID token is issued, and the user session is not terminated, presence of a claim based on the session information could serve for the RP as an indication of an active user session, and its absence could be used by the RP to effect the single sign out functionality.
 
-    In addition, the user session could be renewed from the script by sending a request to the `/json/sessions/` endpoint; thus, relieving trusted RPs from the responsibility to maintain the SSO token, and providing a safe option to renew the user session for the untrusted RPs.
+    In addition, the user session could be renewed from the script by sending a request to the `/json/sessions/` endpoint; thus, relieving a trusted RP from the responsibility to maintain the SSO token, and providing a safe option to renew the user session for an untrusted RP.
 
-    > To make an HTTP request from the OIDC Claims script, you will need the following Java classes to be allowed in the scripting engine configuration for this type:
+    > To make an HTTP request from the OIDC Claims script, you will need the following Java classes to be allowed in the scripting engine configuration for this script type:
     >
     > * `org.forgerock.http.protocol.*`
     > * `org.forgerock.http.Client`

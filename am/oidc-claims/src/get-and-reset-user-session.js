@@ -1,5 +1,5 @@
 /**
- * @file Provides a JavaScript example of a custom claim resolver for the OIDC Claims script
+ * @file Provide a JavaScript example of a custom claim resolver for the OIDC Claims script
  * in ForgeRock Access Management (AM) serving the role of an OpenID Provider (OP).
  * @version 0.1.0
  */
@@ -23,17 +23,34 @@
  * });
  *
  * Remember to add your custom claim to the Supported Claims
- * in the AM console > REALMS > Realm Name > Services > OAuth2 Provider > OpenID Connect,
- * and request the claim in the claims parameter,
- * or map it to a requested scope:
+ * in the AM console under REALMS > _Realm Name_ > Services > OAuth2 Provider > OpenID Connect,
+ * and allow for it to be included in the ID token by enabling Always Return Claims in ID Tokens
+ * in the AM console under REALMS > _Realm Name_ > Services > OAuth2 Provider > Advanced OpenID Connect.
+ *
+ * Then you can map claim to a requested scope:
  * @example
  * utils.setScopeClaimsMap({
  *     'fr:idm:*': [
- *         'sessionClaim',
+ *         'session',
  *         [ . . . ]
  *     ],
  *     [ . . . ]
  * });
+ *
+ * You can also enable "claims_parameter_supported"
+ * in the AM console under REALMS > _Realm Name_ > Services > OAuth2 Provider > Advanced OpenID Connect,
+ * and request the claim via the claims parameter:
+ * {@link https://openid.net/specs/openid-connect-core-1_0.html#ClaimsParameter}.
+ *
+ * In any case, you MUST only return the SSO token from the claim resolver to a trusted RP.
+ * A trusted RP can be associated with a special scope,
+ * or identified by a client ID or by a custom client property
+ * set in the AM console > REALMS > _Realm Name_ > Applications > OAuth 2.0 > Clients > _client name_ > Advanced > Custom Properties.
+ * @example
+ * > Custom Properties: [trusted=true];
+ * if (String(clientProperties.get('customProperties').get('trusted')) === 'true') {
+ *     sessionClaim.tokenId = String(session.getTokenID());
+ * }
  *
  * @returns {object} The selected properties associated with the user session.
  */
@@ -53,11 +70,14 @@ function getSessionClaim() {
             /**
              * Get the SSO token.
              *
-             * The SSO token should only be sent to a TRUSTED RP
-             * (that is, an application created by the same business entity as the OP itself).
+             * The SSO token MUST only be sent to a TRUSTED RP
+             * (that is, an application created by the same business entity as the OP itself),
+             * which in this case is indicated via a custom client property.
              * @see README.md for details.
              */
-            sessionClaim.tokenId = String(session.getTokenID());
+            if (String(clientProperties.get('customProperties').get('trusted')) === 'true') {
+                sessionClaim.tokenId = String(session.getTokenID());
+            }
 
             /**
              * Alternatively, the user session at AM COULD be checked and renewed
@@ -77,6 +97,7 @@ function getSessionClaim() {
              */
             request.setUri('http://am:80/am/json/realms/root/sessions/?_action=refresh');
             request.getHeaders().add('Accept-API-Version', 'resource=4.0, protocol=1.0');
+            request.getHeaders().add('Content-Type', 'application/json');
             request.getHeaders().add('iPlanetDirectoryPro', String(session.getTokenID()));
 
             response = httpClient.send(request).get();

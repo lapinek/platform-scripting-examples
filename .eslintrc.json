@@ -38,6 +38,10 @@
         "session": "readonly",
         "httpClient": "readonly",
         "java": "readonly",
-        "sharedState": "readonly"
+        "sharedState": "readonly",
+        "transientState": "readonly",
+        "idRepository": "readonly",
+        "outcome": "writable",
+        "clientProperties": "readonly"
     }
 }
