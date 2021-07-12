@@ -97,7 +97,6 @@ function getSessionClaim() {
              */
             request.setUri('http://am:80/am/json/realms/root/sessions/?_action=refresh');
             request.getHeaders().add('Accept-API-Version', 'resource=4.0, protocol=1.0');
-            request.getHeaders().add('Content-Type', 'application/json');
             request.getHeaders().add('iPlanetDirectoryPro', String(session.getTokenID()));
 
             response = httpClient.send(request).get();
