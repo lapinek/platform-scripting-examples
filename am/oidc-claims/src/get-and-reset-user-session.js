@@ -6,7 +6,7 @@
 
 /**
  * An example of a custom claim resolver function to be added to the OIDC Claims script:
- * {@link https://stash.forgerock.org/projects/CLOUD/repos/forgeops/browse/config/7.0/cdk/am/config/services/realm/root/scriptingservice/1.0/globalconfig/default/globalscripts/OIDCClaimsScript.javascript#175}.
+ * {@link https://stash.forgerock.org/projects/CLOUD/repos/forgeops/browse/docker/am/config-profiles/cdk/config/services/realm/root/scriptingservice/1.0/globalconfig/default/globalscripts/OIDCClaimsScript.javascript#175}.
  *
  * When the session binding,
  * {@link https://backstage.forgerock.com/docs/am/7.1/apidocs/com/iplanet/sso/SSOToken.html},
