@@ -1,7 +1,0 @@
-{
-    "ignorePatterns": [
-        "custom-endpoint-create.js",
-        "custom-endpoint-PATCH.js",
-        "custom-endpoint-POST.js"
-    ]
-}
