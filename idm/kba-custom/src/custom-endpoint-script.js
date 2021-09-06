@@ -1,229 +1,395 @@
 /**
- * @file Provide content for a script to be run at IDM custom endpoint,
- * which is responsible for storing and validating a security question as BCRYPT version 2a, cost 10 hash in a custom KBA field,
- * and for updating the kbaInfo field with the same question using the default hashing algorithm.
+ * @file Provide content for a script to be run at a ForgeRock Identity Management (IDM) custom endpoint
+ * responsible for validating user's answers to security questions.
+ * Hash plain-text answers with a custom (BCRYPT version 2a, cost 10) algorithm,
+ * and save the hash in a custom Array (Multivalued) Knowledge-Based Authentication (KBA) field.
+ * Update the standard KBA property field (kbaInfo) with correct answers.
  *
- * The following examples could be run in the browser console during an active IDM administrator session,
+ * This can be used in a deployment on a customer's premises
+ * or during transition from an existing KBA implementation
+ * to a controlled environment, such as ForgeRock Identity Cloud (Identity Cloud).
+ *
+ * The user's answer for a security question will be checked against the hash saved in the custom KBA field.
+ * If the answer is valid, it is also saved in the kbaInfo field, hashed with the default algorithms.
+ * If there are other questions defined in the kbaInfo field, they will be preserved.
+ * When the kbaInfo field is populated, it could be used with the standard authentication means,
+ * such as the out of the box KBA nodes.
+ *
+ * The examples below could be run in the browser console during an active IDM administrator session,
  * using the following URL template:
- * {{idm_base_url}}/endpoint/{kba-custom-endpoint-name}/{fr_user_id}.
+ * {idm_base_url}/endpoint/{kba-custom-endpoint-name}/{user-id}
  *
+ * PATCH to save a single plain-text answer as the custom hash in the custom KBA field,
+ * and save the answer hashed with the default algorithms in the kbaInfo field.
  * @example
- * Use POST to validate an answer against the custom KBA field,
- * and if it matches the hash, save the answer hashed with the default algorithm in the kbaInfo field.
- *
- * await $.ajax({
- *     "method": "POST",
- *     "url": "/openidm/endpoint/kba-custom/d7eed43d-ab2c-40be-874d-92571aa17107",
- *     "data": JSON.stringify({
- *         "field": "frIndexedMultivalued3",
- *         "input": [
+ * var customEndpointName = '{custom-endpoint-name}';
+ * var userId = '{user-id}';
+ * var data = JSON.stringify([
+ *     {
+ *         operation: 'replace',
+ *         field: '{custom-kba-field-name}',
+ *         value: [
  *             {
- *                 "answer": "blue",
- *                 "questionId": "1"
+ *                 questionId: '{question-id}',
+ *                 answer: '{answer}'
  *             }
  *         ]
- *     }),
- *     "headers": {
- *         "x-requested-with": "XMLHttpRequest",
- *         "Content-Type": "application/json"
+ *     }
+ * ]);
+
+ * await $.ajax({
+ *     method: 'PATCH',
+ *     url: '/openidm/endpoint/' + customEndpointName + '/' + userId,
+ *     data: data,
+ *     headers: {
+ *         'x-requested-with': 'XMLHttpRequest',
+ *         'Content-Type': 'application/json'
  *     }
  * });
  *
+ * POST to validate a single answer against the custom hash saved in the custom KBA field;
+ * if the answer is valid, save it hashed with the default algorithms in the kbaInfo field.
  * @example
- * PATCH to save user's answer as the BCRYPT hash in the custom KBA field,
- * and also, save the answer hashed with the default algorithm in the kbaInfo field.
- * await $.ajax({
- *     "method": "PATCH",
- *     "url": "/openidm/endpoint/kba-custom/d7eed43d-ab2c-40be-874d-92571aa17107",
- *     "data": JSON.stringify([
+ * var customEndpointName = '{custom-endpoint-name}';
+ * var userId = '{user-id}';
+ * var data = JSON.stringify({
+ *     field: '{custom-kba-field-name}',
+ *     input: [
  *         {
- *             "operation": "replace",
- *             "field": "frIndexedMultivalued3",
- *             "value": [
- *                 {
- *                     "answer": "reddish",
- *                     "questionId": "1"
- *                 }
- *             ]
+ *             questionId: '{question-id}',
+ *             answer: '{answer}'
  *         }
- *     ]),
- *     "headers": {
- *         "x-requested-with": "XMLHttpRequest",
- *         "Content-Type": "application/json"
+ *     ]
+ * });
+ *
+ * await $.ajax({
+ *     method: 'POST',
+ *     url: '/openidm/endpoint/' + customEndpointName + '/' + userId,
+ *     data: data,
+ *     headers: {
+ *         'x-requested-with': 'XMLHttpRequest',
+ *         'Content-Type': 'application/json'
  *     }
  * });
+ *
+ * @see {@link ../examples} for saving and verifying multiple answers examples.
  */
 
+/**
+ * The result object to be returned in the response.
+ * @typedef {object} result
+ * @property {string} _id - The user identifier.
+ * @property {string} message - A message describing the outcome.
+ */
+
+/**
+ * @returns {result}
+ */
 (function () {
-    var frJava = JavaImporter(
+    /**
+     * Import Java for handling the request and for custom hashing.
+     */
+    const javaImports = JavaImporter(
         java.security.SecureRandom,
         org.bouncycastle.crypto.generators.OpenBSDBCrypt,
-        org.forgerock.json.JsonValue,
+        java.lang.String,
         org.forgerock.json.resource.CreateRequest,
-        org.forgerock.json.resource.NotSupportedException,
         org.forgerock.json.resource.PatchRequest,
-        java.lang.String
+        org.forgerock.json.resource.NotSupportedException
     );
 
-    var kbaJson;
-
-    var userId = request.resourcePath;
-
-    var managedUserURI = 'managed/alpha_user/' + userId;
-    var allSecurityQURI = 'config/selfservice.kba';
-    var customKbaFieldName;
-    var defaultCustomKbaFieldName = 'frIndexedMultivalued3';
-
-    var  result = {
-        _id: userId,
-        message: 'Success'
-    };
+    const userId = request.resourcePath;
+    const managedUserUri = 'managed/alpha_user/' + userId;
+    const kbaConfigurationUri = 'config/selfservice.kba';
+    const defaultKbaCustomField = 'frIndexedMultivalued3';
+    const successMessage = 'Success';
 
     /**
-     * POST to validate an answer against the custom KBA field,
-     * and if it matches the hash, save the answer hashed with the default algorithm in the kbaInfo field.
+     * BCrypt defaults.
      */
-    if (request instanceof frJava.CreateRequest) {
-        var profileAnswer;
-        var profileQuestionId;
-        var inputAnswer;
-        var inputAnswerJava;
-        var inputQuestionId;
+    const bcryptVersion = '2a';
+    const bcryptCost = 10;
 
-        var requestContent = JSON.parse(request.content);
+    /**
+     * Obtain the KBA configuration.
+     */
+    const kbaConfiguration = openidm.read(kbaConfigurationUri, null, [
+        'kbaPropertyName',
+        'questions'
+    ]);
 
-        if (!Array.isArray(requestContent.input)) {
-            result.message = 'Error: No input provided.';
-            return result;
-        }
+    /**
+     * Get the standard KBA property name from the configuration.
+     */
+    const kbaPropertyName = kbaConfiguration.kbaPropertyName;
 
-        customKbaFieldName = requestContent.field ||  defaultCustomKbaFieldName;
+    /**
+     * @type {result}
+     */
+    const  result = {
+        _id: userId
+    };
 
-        var userMap = openidm.read(managedUserURI, null, ['kbaInfo', customKbaFieldName]);
-        if (!userMap) {
-            result.message = 'Error: User not found.';
-            return result;
-        }
-
-        requestContent.input.forEach(function (item) {
-            if (item) {
-                inputAnswer = String(item.answer).toLowerCase();
-                inputAnswerJava = new frJava.String(inputAnswer);
-                inputQuestionId = String(item.questionId);
-
-                var questions = userMap[customKbaFieldName];
-                if (Array.isArray(questions)) {
-                    questions.forEach(function (questionJson) {
-                        var question = JSON.parse(questionJson);
-                        profileAnswer = String(question.answer);
-                        profileQuestionId = String(question.questionId);
-                    });
-                }
-
-                if (!inputQuestionId || inputQuestionId !== profileQuestionId) {
-                    result.message = 'Error: Question id is not matching with profile.';
-                    return;
-                }
-
-                if (!inputAnswer) {
-                    result.message = 'Error: Answer is null or empty.';
-                    return;
-                }
-
-                if (frJava.OpenBSDBCrypt.checkPassword(profileAnswer, inputAnswerJava.toCharArray())) {
-                    kbaJson = getKbaJson(inputQuestionId, inputAnswer, 'replace', 'kbaInfo');
-                    openidm.patch(managedUserURI, null, kbaJson);
-                } else {
-                    result.message = 'Failure';
-                    return;
-                }
-            }
-        });
-
-        return result;
-    } else if (request instanceof frJava.PatchRequest) {
-        var answer;
-        var questionId;
-
-        var operations =  request.patchOperations;
-
-        if (!Array.isArray(operations)) {
-            result.message = 'Error: invalid input.';
-            return result;
-        }
-
-        var allSecurityQMap = openidm.read(allSecurityQURI, null, ['questions']);
-        if (!allSecurityQMap || !allSecurityQMap.questions || !Object.keys(allSecurityQMap.questions).length) {
-            result.message = 'Error: no security questions found.';
-            return result;
-        }
-
-        operations.forEach(function (operation) {
-            customKbaFieldName = operation.field ||  defaultCustomKbaFieldName;
-
-            if (Array.isArray(operation.value)) {
-                operation.value.forEach(function (item) {
-                    answer = String(item.answer || '').toLowerCase();
-                    questionId = String(item.questionId || '').replace(/^0+/, '');
-                });
-            }
-        });
-
-        if (!answer || answer.length < 4) {
-            result.message = 'Error: Answer is not meeting minimum length requirement.';
-            return result;
-        }
-
-        if (!questionId || !allSecurityQMap.questions[questionId]) {
-            result.message = 'Error: Question ID is not valid.';
-            return result;
-        }
-
-        var rng = new frJava.SecureRandom();
-        var salt = rng.generateSeed(16);
-        var  answerJava = new frJava.String(answer);
-        var openBSDBcrypt = frJava.OpenBSDBCrypt.generate('2a',  answerJava.toCharArray(), salt, 10);
-
-        var kbaCustomJson = getKbaCustomJson(questionId, openBSDBcrypt, 'replace', customKbaFieldName);
-        openidm.patch(managedUserURI, null, kbaCustomJson);
-
-        kbaJson = getKbaJson(questionId, answer, 'replace', 'kbaInfo');
-        openidm.patch(managedUserURI, null, kbaJson);
-
-        return result;
+    if (request instanceof javaImports.PatchRequest) {
+        /**
+         * PATCH to save question definitions with a plain-text answers as the custom hash in the custom KBA field,
+         * and save the answer hashed with the default algorithms in the kbaInfo field.
+         */
+        result.message = saveQuestions();
+    } else if (request instanceof javaImports.CreateRequest) {
+        /**
+         * POST to validate user's answers against the custom KBA field, and if they match the hash,
+         * save the answers hashed with the default algorithms in the kbaInfo field.
+         */
+        result.message = validateAnswers();
     } else {
-        throw new frJava.NotSupportedException(request.method);
+        /**
+         * Throw if the request method is not supported.
+         */
+        throw new javaImports.NotSupportedException(request.method);
     }
 
-    function getKbaCustomJson(questionId, answer, operation,  field) {
-        var value = JSON.stringify({
-            answer: String(answer),
-            questionId: String(questionId)
+    return result;
+
+    /**
+     * Handle a PATCH request.
+     * @returns {string} A message describing the outcome of the request.
+     */
+    function saveQuestions() {
+        function getKbaCustomValue(questions) {
+            function getKbaCustomQuestion(question) {
+                function hashAnswer(answer) {
+                    const secureRandom = new javaImports.SecureRandom();
+                    const salt = secureRandom.generateSeed(16);
+                    const answerJava = new javaImports.String(answer);
+
+                    return javaImports.OpenBSDBCrypt.generate(bcryptVersion, answerJava.toCharArray(), salt, bcryptCost);
+                }
+
+                const kbaCustomQuestion = JSON.stringify({
+                    questionId: question.questionId,
+                    answer: String(hashAnswer(question.answer))
+                });
+
+                return kbaCustomQuestion;
+            }
+
+            return questions.map(function (question) {
+                return getKbaCustomQuestion(question);
+            });
+        }
+
+        /**
+         * The global custom endpoint PATCH request object.
+         * @typedef {object} request
+         * @property {object[]} patchOperations - The PATCH operation definitions.
+         * @property {string} patchOperations[].operation - The PATCH operation name.
+         * @property {string} [patchOperations[].field=frIndexedMultivalued3] - The custom KBA field name.
+         * @property {object[]} patchOperations[].value - An array of answers with the corresponding question IDs.
+         * @property {string} patchOperations[].value.answer - Plain-text answer to a security question.
+         * @property {string} patchOperations[].value.questionId - The security question ID.
+         * @see {@link https://backstage.forgerock.com/docs/idm/7.1/scripting-guide/script-variables-custom-endpoints.html}.
+         * @see {@link https://backstage.forgerock.com/docs/ig/7.1/_attachments/apidocs/org/forgerock/json/resource/PatchRequest.html}.
+         */
+
+        if (request.patchOperations.length !== 1) {
+            return 'Error: Exactly one patch operation is expected in the request; found: ' + request.patchOperations.length + '.';
+        }
+
+        if (!(kbaConfiguration && kbaConfiguration.questions && Object.keys(kbaConfiguration.questions).length)) {
+            return 'Error: No security questions found in KBA configuration.';
+        }
+
+        const patchOperation = request.patchOperations[0];
+        const operation = patchOperation.operation || 'replace';
+        if (operation !== 'replace') {
+            return 'Error: Only replace patch operation is currently supported.';
+        }
+
+        const requestQuestions = formatQuestions(patchOperation.value);
+        if (!(Array.isArray(requestQuestions) && requestQuestions.length)) {
+            return 'Error: No questions provided in the request.';
+        }
+
+        let invalidQuestions;
+        let invalidQuestionsIDs;
+
+        invalidQuestions = requestQuestions.filter(function (requestQuestion) {
+            if (!(requestQuestion.questionId && kbaConfiguration.questions[requestQuestion.questionId])) {
+                return true;
+            }
+        });
+        if (invalidQuestions.length) {
+            invalidQuestionsIDs = invalidQuestions.map((invalidQuestion) => {
+                return invalidQuestion.questionId;
+            }).join(', ');
+
+            return 'Error: Question ID(s) not found in the configuration: ' + invalidQuestionsIDs;
+        }
+
+        invalidQuestions = requestQuestions.filter(function (requestQuestion) {
+            if (!(requestQuestion.answer && requestQuestion.answer.length > 3)) {
+                return true;
+            }
+        });
+        if (invalidQuestions.length) {
+            const invalidAnswers = invalidQuestions.map((question) => {
+                return question.answer;
+            }).join(', ');
+
+            return 'Error: Answers not meeting minimum length requirements: ' + invalidAnswers;
+        }
+
+        const kbaCustomField = patchOperation.field || defaultKbaCustomField;
+        openidm.patch(managedUserUri, null, [
+            {
+                operation: operation,
+                field: kbaCustomField,
+                value: getKbaCustomValue(requestQuestions)
+            },
+            {
+                operation: operation,
+                field: kbaPropertyName,
+                value: getKbaInfoValue(requestQuestions)
+            }
+        ]);
+
+        return successMessage;
+    }
+
+    /**
+     * @returns {string} A message describing the outcome of the request.
+     */
+    function validateAnswers() {
+        /**
+         * The global custom endpoint POST request object.
+         * @typedef {object} request
+         * @property {object} content - The POST data.
+         * @property {string} [content.field=frIndexedMultivalued3] - The custom KBA field name.
+         * @property {object[]} content.input - An array of answers with the corresponding question IDs.
+         * @property {string} content.input[].answer - Plain-text answer to a security question.
+         * @property {string} content.input[].questionId - The security question ID.
+         * @see {@link https://backstage.forgerock.com/docs/idm/7.1/scripting-guide/script-variables-custom-endpoints.html}.
+         * @see {@link https://backstage.forgerock.com/docs/ig/7.1/_attachments/apidocs/org/forgerock/json/resource/CreateRequest.html}.
+         */
+
+        const requestContent = JSON.parse(request.content);
+        if (!(Array.isArray(requestContent.input) && requestContent.input.length)) {
+            return 'Error: No input provided.';
+        }
+
+        const requestQuestions = formatQuestions(requestContent.input);
+        if (!(Array.isArray(requestQuestions) && requestQuestions.length)) {
+            return 'Error: No questions provided in the request.';
+        }
+
+        const kbaCustomField = requestContent.field ||  defaultKbaCustomField;
+        const userObject = openidm.read(managedUserUri, null, [kbaPropertyName, kbaCustomField]);
+        if (!userObject) {
+            return 'Error: User not found.';
+        }
+
+        if (!userObject[kbaCustomField]) {
+            return 'Error: The custom KBA field not found in the profile.';
+        }
+
+        const profileQuestions = userObject[kbaCustomField].map((questionJson) => {
+            return JSON.parse(questionJson);
         });
 
-        var valueList = frJava.JsonValue.array(value);
+        let invalidQuestions;
+        let invalidQuestionsIDs;
 
-        var securityQMap = frJava.JsonValue.json(frJava.JsonValue.object());
-        securityQMap.put('value', valueList);
-        securityQMap.put('operation', operation);
-        securityQMap.put('field', field);
+        invalidQuestions = requestQuestions.filter(function (question) {
+            const profileQuestionsIds = profileQuestions.map((question) => {
+                return question.questionId;
+            });
 
-        return frJava.JsonValue.json(frJava.JsonValue.array(securityQMap));
+            return !(question.questionId && profileQuestionsIds.indexOf(question.questionId) !== -1);
+        });
+        if (invalidQuestions.length) {
+            invalidQuestionsIDs = invalidQuestions.map((question) => {
+                return question.questionId;
+            }).join(', ');
+
+            return  'Error: Question ID(s) not found in the profile: ' + invalidQuestionsIDs;
+        }
+
+        invalidQuestions = requestQuestions.filter(function (requestQuestion) {
+            return !(requestQuestion.answer);
+        });
+        if (invalidQuestions.length) {
+            invalidQuestionsIDs = invalidQuestions.map((question) => {
+                return question.questionId;
+            }).join(', ');
+
+            return 'Error: Question ID(s) with no answer provided: ' + invalidQuestionsIDs;
+        }
+
+        const hasIncorrectAnswer = requestQuestions.some(function (requestQuestion) {
+            const requestAnswerJava = new javaImports.String(requestQuestion.answer);
+            const correctAnswer = profileQuestions.find(function (profileQuestion) {
+                return profileQuestion.questionId === requestQuestion.questionId;
+            }).answer;
+
+            return !javaImports.OpenBSDBCrypt.checkPassword(correctAnswer, requestAnswerJava.toCharArray());
+        });
+        if (hasIncorrectAnswer) {
+            return 'Failure';
+        }
+
+        let kbaInfoValue = getKbaInfoValue(requestQuestions);
+        kbaInfoValue = kbaInfoValue.concat(userObject[kbaPropertyName].filter((kbaInfoQuestion) => {
+            return !kbaInfoValue.map((kbaInfoValueQuestion) => {
+                return kbaInfoValueQuestion.questionId;
+            }).includes(kbaInfoQuestion.questionId);
+        }));
+        openidm.patch(managedUserUri, null, [
+            {
+                operation: 'replace',
+                field: kbaPropertyName,
+                value: kbaInfoValue
+            }
+        ]);
+
+        return successMessage;
     }
 
-    function getKbaJson(questionId, answer, operation,  field) {
-        var kbaInfoItem = frJava.JsonValue.json(frJava.JsonValue.object());
-        kbaInfoItem.put('questionId', questionId);
-        kbaInfoItem.put('answer', openidm.hash(answer, null));
+    function formatQuestions(questions) {
+        function formatQuestionId(questionId) {
+            return String(questionId || '').replace(/^0+/, '');
+        }
 
-        var kbaInfo = frJava.JsonValue.array(kbaInfoItem);
+        function formatAnswer(answer) {
+            return String(answer || '').toLowerCase();
+        }
 
+        return questions.map((question) => {
+            return {
+                questionId: formatQuestionId(question.questionId),
+                answer: formatAnswer(question.answer)
+            };
+        });
+    }
 
-        var securityQMap = frJava.JsonValue.json(frJava.JsonValue.object());
-        securityQMap.put('value', kbaInfo);
-        securityQMap.put('operation', operation);
-        securityQMap.put('field', field);
+    function getKbaInfoValue(questions) {
+        /**
+         * Use the default hashing algorithms to create an individual answer hash
+         * for storing in the kbaInfo field.
+         * @param {object} question - The question definition.
+         * @param {string} question.questionId - The question ID.
+         * @param {string} question.answer - The answer.
+         * @returns {object} The individual value to store in the kbaInfo (Array) field.
+         */
+        function getKbaInfoQuestion(question) {
+            return {
+                questionId: question.questionId,
+                answer: openidm.hash(question.answer, null)
+            };
+        }
 
-        return frJava.JsonValue.json(frJava.JsonValue.array(securityQMap));
+        return questions.map(function (question) {
+            return getKbaInfoQuestion(question);
+        });
     }
 }());
