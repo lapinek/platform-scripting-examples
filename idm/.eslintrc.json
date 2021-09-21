@@ -7,5 +7,9 @@
         "prefer-const": [
             "error"
         ]
+    },
+    "globals": {
+        "openidm": "readonly",
+        "request": "readonly"
     }
 }

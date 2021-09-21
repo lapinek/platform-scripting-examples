@@ -1,0 +1,17 @@
+{
+    "globals": {
+        "requestParameters": "readonly",
+        "callbacks": "readonly",
+        "action": "writable",
+        "session": "readonly",
+        "httpClient": "readonly",
+        "sharedState": "readonly",
+        "transientState": "readonly",
+        "idRepository": "readonly",
+        "outcome": "writable",
+        "clientProperties": "readonly",
+        "requestHeaders": "readonly",
+        "identity": "readonly",
+        "scriptName": "readonly"
+    }
+}

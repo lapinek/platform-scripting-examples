@@ -25,27 +25,21 @@
             "always"
         ],
         "no-unused-vars": "warn",
-        "space-before-blocks": "error"
+        "space-before-blocks": "error",
+        "space-before-function-paren": [
+            "error",
+            {
+                "named": "never"
+            }
+
+        ]
     },
     "globals": {
         "JavaImporter": "readonly",
         "org": "readonly",
         "logger": "readonly",
-        "requestParameters": "readonly",
-        "callbacks": "readonly",
         "com": "readonly",
         "javax": "readonly",
-        "action": "writable",
-        "session": "readonly",
-        "httpClient": "readonly",
-        "java": "readonly",
-        "sharedState": "readonly",
-        "transientState": "readonly",
-        "idRepository": "readonly",
-        "outcome": "writable",
-        "clientProperties": "readonly",
-        "requestHeaders": "readonly",
-        "openidm": "readonly",
-        "request": "readonly"
+        "java": "readonly"
     }
 }
