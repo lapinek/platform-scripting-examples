@@ -2,7 +2,7 @@
 
 ## <a id="contents" name="contents"></a>Contents
 
-* [Send Data (a theme ID) to the Browser with ScriptTextOutputCallback](#send-data-to-the-browser)
+* [Send Data (for example, a theme ID) to the Browser with ScriptTextOutputCallback](#send-data-to-the-browser)
 
 * [Get User Location from Their Postal or Physical Address and Save the Location Information in `sharedState`](#location-from-postal-or-physical-address)
 
