@@ -126,7 +126,7 @@
     /**
      * @type {result}
      */
-    const  result = {
+    const result = {
         _id: userId
     };
 
@@ -283,7 +283,7 @@
             return 'Error: No questions provided in the request.';
         }
 
-        const kbaCustomField = requestContent.field ||  defaultKbaCustomField;
+        const kbaCustomField = requestContent.field || defaultKbaCustomField;
         const userObject = openidm.read(managedUserUri, null, [kbaPropertyName, kbaCustomField]);
         if (!userObject) {
             return 'Error: User not found.';
@@ -312,7 +312,7 @@
                 return question.questionId;
             }).join(', ');
 
-            return  'Error: Question ID(s) not found in the profile: ' + invalidQuestionsIDs;
+            return 'Error: Question ID(s) not found in the profile: ' + invalidQuestionsIDs;
         }
 
         invalidQuestions = requestQuestions.filter(function (requestQuestion) {
