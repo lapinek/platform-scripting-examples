@@ -31,8 +31,15 @@
             {
                 "named": "never"
             }
-
-        ]
+        ],
+        "keyword-spacing": [
+            "error",
+            {
+                "before": true,
+                "after": true
+            }
+        ],
+        "no-multi-spaces": "error"
     },
     "globals": {
         "JavaImporter": "readonly",
