@@ -52,7 +52,10 @@
                 "maxBOF": 0
             }
         ],
-        "no-trailing-spaces": "error"
+        "no-trailing-spaces": "error",
+        "space-infix-ops": "error",
+        "spaced-comment": "error",
+        "comma-spacing": "error"
     },
     "globals": {
         "JavaImporter": "readonly",
