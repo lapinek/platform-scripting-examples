@@ -15,7 +15,7 @@
     var outcome = 'true';
     var deviceIdHeaderName = 'device-id';
     var timeKey = 'timestamp';
-    var deviceKey = 'device-id';
+    var deviceKey = 'frIndexedMultivalued2';
     var deviceIdKey = 'id';
     var dataFormat = 'yyyy-MM-dd HH:mm:ss';
 
