@@ -7,12 +7,15 @@
     Params {object} currentDevice,{object} userDevices, {Logger} logger
     return {Boolean} flag
     */
-    function isUserTrustedDevicePresent(currentDevice, userDevices) {
+    function isUserTrustedDevicePresent() {
         var userTrustedDevicePresent;
         var currentDeviceObject;
         var currentDate;
         var userDeviceObject;
         var userDeviceDate;
+
+        var currentDevice = sharedState.get(deviceKey);
+        var userDevices = idRepository.getAttribute(userId, 'fr-attr-imulti2').toArray();
 
         try {
             currentDeviceObject = JSON.parse(currentDevice);
@@ -20,7 +23,7 @@
             logger.message('Error: the current device data cannot be parsed.');
         }
 
-        if (currentDeviceObject && userDevices.length) {
+        if (currentDeviceObject) {
             userDevices.forEach(function (userDevice) {
                 try {
                     userDeviceObject = JSON.parse(userDevice);
@@ -28,9 +31,9 @@
                     logger.message('Error: the stored device data cannot be parsed.');
                 }
 
-                if (userDeviceObject && String(userDeviceObject.id) === String(currentDeviceObject.id)) {
+                if (userDeviceObject && String(userDeviceObject[deviceIdKey]) === String(currentDeviceObject[deviceIdKey])) {
                     currentDate = new Date(Date.now());
-                    userDeviceDate = new Date(userDeviceObject.timestamp.split(' ').join('T') + '.000' + 'Z');
+                    userDeviceDate = new Date(userDeviceObject[timeKey].split(' ').join('T') + '.000' + 'Z');
 
                     if ((currentDate - userDeviceDate) / (1000 * 60 * 60 * 24) < 180) {
                         userTrustedDevicePresent = true;
@@ -65,6 +68,16 @@
     );
 
     var outcome;
+    var deviceKey = 'frIndexedMultivalued2';
+    var timeKey = 'timestamp';
+    var deviceIdKey = 'id';
+    var userMfaOptionsKey = 'fr-attr-imulti1';
+    var mfaOptions = [
+        'SMS',
+        'VOICE',
+        'TOTP'
+    ];
+    var accessFlowKey = 'access_flow';
 
     // users of the following group doesn't require MFA to complete login
     // String mfaGroup1 = "cn=Jackson.com-MFA,ou=groups,ou=identities";
@@ -72,35 +85,26 @@
     var noMfaGroups = [
         'cn=NoMFA,ou=groups,ou=identities'
     ];
-    var accessFlowKey = 'access_flow';
 
-    // MFA options
-    var mfaOptions = [
-        'SMS',
-        'VOICE',
-        'TOTP'
-    ];
-
-    // Read mfa configuration,group information and device list from users profile
     var userId = sharedState.get('_id');
-    var mfaList = idRepository.getAttribute(userId, 'fr-attr-imulti1').toArray();
-    var userDevices = idRepository.getAttribute(userId, 'fr-attr-imulti2').toArray();
-    var memberships = idRepository.getAttribute(userId, 'isMemberOf').toArray();
+    var resetPassword = sharedState.get('frIndexedString3');
 
-    // Read currentDevice,username and passwordRest flag from sharedState
-    var currentDevice = sharedState.get('frIndexedMultivalued2');
-    var passwordRest = sharedState.get('frIndexedString3');
+    // Read from user's profile
+    var userGroups = idRepository.getAttribute(userId, 'isMemberOf').toArray();
+    var userMfaOptions = idRepository.getAttribute(userId, userMfaOptionsKey).toArray().map(function (mfaOption) {
+        return String(mfaOption);
+    });
 
     // Start logic to check next step
-    if (!(passwordRest && String(passwordRest).toLowerCase() !== 'false')) {
+    if (!(resetPassword && String(resetPassword).toLowerCase() !== 'false')) {
         // password reset flag is not set
-        if (intersectArrays(getRdnValues(memberships), getRdnValues(noMfaGroups)).length) {
+        if (intersectArrays(getRdnValues(userGroups), getRdnValues(noMfaGroups)).length) {
             // user is part of no-MFA group
             outcome = 'no-mfa-required';
         } else {
             // User not part of no MFA group
-            if (intersectArrays(mfaList.map(function (mfaOption) {return String(mfaOption);}), mfaOptions).length) {
-                if (!isUserTrustedDevicePresent(currentDevice, userDevices)) {
+            if (intersectArrays(userMfaOptions, mfaOptions).length) {
+                if (!isUserTrustedDevicePresent()) {
                     // user has mfa factors registered but does not have device registered
                     // logger.info("[[[[ JNL_MFA_Applicable: MFA Device Preset ]]]]");
                     outcome = 'mfa-selection';
@@ -108,8 +112,7 @@
                     // user provides valid device-id
                     outcome = 'no-mfa-required';
                 }
-            }
-            else {// user has an unknown device or no device at all
+            } else {
                 outcome = 'mfa-registration';
             }
         }
