@@ -42,7 +42,8 @@
         "no-multi-spaces": "error",
         "space-infix-ops": "error",
         "spaced-comment": "error",
-        "comma-spacing": "error"
+        "comma-spacing": "error",
+        "camelcase": "error"
     },
     "globals": {
         "JavaImporter": "readonly",
