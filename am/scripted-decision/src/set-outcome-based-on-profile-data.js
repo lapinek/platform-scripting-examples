@@ -11,7 +11,6 @@
         var userTrustedDevicePresent;
         var currentDeviceObject;
         var currentDate;
-        var userDeviceObject;
         var userDeviceDate;
 
         var currentDevice = sharedState.get(deviceKey);
@@ -25,6 +24,8 @@
 
         if (currentDeviceObject) {
             userDevices.forEach(function (userDevice) {
+                var userDeviceObject;
+
                 try {
                     userDeviceObject = JSON.parse(userDevice);
                 } catch (e) {
@@ -72,6 +73,7 @@
     var timeKey = 'timestamp';
     var deviceIdKey = 'id';
     var userMfaOptionsKey = 'fr-attr-imulti1';
+    var resetPasswordAttributeName = 'fr-attr-istr3';
     var mfaOptions = [
         'SMS',
         'VOICE',
@@ -87,7 +89,9 @@
     ];
 
     var userId = sharedState.get('_id');
-    var resetPassword = sharedState.get('frIndexedString3');
+
+    var resetPassword = idRepository.getAttribute(userId, resetPasswordAttributeName).toArray()[0];
+    resetPassword = !!resetPassword && String(resetPassword) !== 'false';
 
     // Read from user's profile
     var userGroups = idRepository.getAttribute(userId, 'isMemberOf').toArray();
@@ -96,7 +100,7 @@
     });
 
     // Start logic to check next step
-    if (!(resetPassword && String(resetPassword).toLowerCase() !== 'false')) {
+    if (!resetPassword) {
         // password reset flag is not set
         if (intersectArrays(getRdnValues(userGroups), getRdnValues(noMfaGroups)).length) {
             // user is part of no-MFA group
