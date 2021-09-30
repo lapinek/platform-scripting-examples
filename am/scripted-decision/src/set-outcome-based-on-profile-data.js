@@ -1,6 +1,36 @@
 (function () {
     'use strict';
 
+    var deviceKey = 'frIndexedMultivalued2';
+    var timestampKey = 'timestamp';
+    var deviceIdKey = 'id';
+    var profileMfaOptionsAttributeName = 'fr-attr-imulti1';
+    var profileResetPasswordAttributeName = 'fr-attr-istr3';
+    var mfaOptions = [
+        'SMS',
+        'VOICE',
+        'TOTP'
+    ];
+    var accessFlowKey = 'access_flow';
+
+    // users of the following group doesn't require MFA to complete login
+    // String mfaGroup1 = "cn=Jackson.com-MFA,ou=groups,ou=identities";
+    // String mfaGroup2 = "cn=Internal-MFA,ou=groups,ou=identities";
+    var noMfaGroups = [
+        'cn=NoMFA,ou=groups,ou=identities'
+    ];
+
+    var userId = sharedState.get('_id');
+
+    var resetPassword = idRepository.getAttribute(userId, profileResetPasswordAttributeName).toArray()[0];
+    resetPassword = !!resetPassword && String(resetPassword) !== 'false';
+
+    // Read from user's profile
+    var userGroups = idRepository.getAttribute(userId, 'isMemberOf').toArray();
+    var userMfaOptions = idRepository.getAttribute(userId, profileMfaOptionsAttributeName).toArray().map(function (mfaOption) {
+        return String(mfaOption);
+    });
+
     /*
     isUserTrustedDevicePresent is function used to check if the current Device which the user is
     signing in with is part of the trusted device registered in the users profile.
@@ -34,7 +64,7 @@
 
                 if (userDeviceObject && String(userDeviceObject[deviceIdKey]) === String(currentDeviceObject[deviceIdKey])) {
                     currentDate = new Date(Date.now());
-                    userDeviceDate = new Date(userDeviceObject[timeKey].split(' ').join('T') + '.000' + 'Z');
+                    userDeviceDate = new Date(userDeviceObject[timestampKey].split(' ').join('T') + '.000' + 'Z');
 
                     if ((currentDate - userDeviceDate) / (1000 * 60 * 60 * 24) < 180) {
                         userTrustedDevicePresent = true;
@@ -64,41 +94,6 @@
         });
     }
 
-    var javaImports = JavaImporter(
-        org.forgerock.openam.auth.node.api.Action
-    );
-
-    var outcome;
-    var deviceKey = 'frIndexedMultivalued2';
-    var timeKey = 'timestamp';
-    var deviceIdKey = 'id';
-    var userMfaOptionsKey = 'fr-attr-imulti1';
-    var resetPasswordAttributeName = 'fr-attr-istr3';
-    var mfaOptions = [
-        'SMS',
-        'VOICE',
-        'TOTP'
-    ];
-    var accessFlowKey = 'access_flow';
-
-    // users of the following group doesn't require MFA to complete login
-    // String mfaGroup1 = "cn=Jackson.com-MFA,ou=groups,ou=identities";
-    // String mfaGroup2 = "cn=Internal-MFA,ou=groups,ou=identities";
-    var noMfaGroups = [
-        'cn=NoMFA,ou=groups,ou=identities'
-    ];
-
-    var userId = sharedState.get('_id');
-
-    var resetPassword = idRepository.getAttribute(userId, resetPasswordAttributeName).toArray()[0];
-    resetPassword = !!resetPassword && String(resetPassword) !== 'false';
-
-    // Read from user's profile
-    var userGroups = idRepository.getAttribute(userId, 'isMemberOf').toArray();
-    var userMfaOptions = idRepository.getAttribute(userId, userMfaOptionsKey).toArray().map(function (mfaOption) {
-        return String(mfaOption);
-    });
-
     // Start logic to check next step
     if (!resetPassword) {
         // password reset flag is not set
@@ -126,6 +121,4 @@
     }
 
     sharedState.put(accessFlowKey, outcome);
-
-    action = javaImports.Action.goTo(outcome).build();
 }());

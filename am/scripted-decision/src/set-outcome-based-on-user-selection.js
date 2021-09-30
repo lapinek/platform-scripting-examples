@@ -9,7 +9,7 @@
 
     var callbackList;
     var selectedIndex;
-    var userMfaOptionsKey = 'fr-attr-imulti1';
+    var profileMfaOptionsAttributeName = 'fr-attr-imulti1';
     var mfaOptions = [
         'SMS',
         'VOICE',
@@ -24,14 +24,15 @@
     if (accessFlow !== 'mfa-registration') {
         choiceName = 'MFA Selection';
 
-        mfaOptions = idRepository.getAttribute(userId, userMfaOptionsKey).toArray().map(function (mfaOption) {
+        mfaOptions = idRepository.getAttribute(userId, profileMfaOptionsAttributeName).toArray().map(function (mfaOption) {
             return String(mfaOption);
         });
     }
 
     if (callbacks.isEmpty()) {
-        logger.error('JNL_MFA_Selection: Outcome for user: ' + userId + ' presented choices for MFA selection ');
-
+        /**
+         * Present choices for MFA selection.
+         */
         callbackList = [
             new javaImports.ChoiceCallback(choiceName, mfaOptions, 0, false),
             new javaImports.NameCallback('Enter MFA selection', 'Enter Here')
@@ -44,9 +45,6 @@
         if (selectedIndex === -1) {
             selectedIndex = callbacks.get(0).getSelectedIndexes()[0];
         }
-
-        logger.error('JNL_MFA_Selection: Outcome for user : ' + userId + ' : Entered MFA Value : ' + callbacks.get(1).getName());
-        logger.error('JNL_MFA_Selection: Outcome for user : ' + userId + ' : Choice selection index : ' + selectedIndex);
 
         action = javaImports.Action.goTo(mfaOptions[selectedIndex]).build();
     }
