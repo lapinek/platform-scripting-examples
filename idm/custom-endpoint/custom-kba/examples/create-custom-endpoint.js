@@ -3,7 +3,7 @@
  * Use in in the browser console during an active IDM administrator session.
  */
 
-var customEndpointName = '{your-custom-endpoint-name}';
+var customEndpointName = 'customKba';
 var customEndpointScriptContent = `
 
 {your-custom-endpoint-script}

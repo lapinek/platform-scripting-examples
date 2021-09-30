@@ -5,7 +5,7 @@
  * Use in the browser console during an active IDM administrator session.
  */
 
-var customEndpointName = 'kba-custom';
+var customEndpointName = 'customKba';
 var userId = 'd7eed43d-ab2c-40be-874d-92571aa17107';
 var data = JSON.stringify([
     {

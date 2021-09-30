@@ -17,7 +17,7 @@
  *
  * The examples below could be run in the browser console during an active IDM administrator session,
  * using the following URL template:
- * {idm_base_url}/endpoint/{kba-custom-endpoint-name}/{user-id}
+ * {idm_base_url}/endpoint/{custom-kba-endpoint-name}/{user-id}
  *
  * PATCH to save a single plain-text answer as the custom hash in the custom KBA field,
  * and save the answer hashed with the default algorithms in the kbaInfo field.
