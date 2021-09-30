@@ -3,10 +3,11 @@
 
     var currentDeviceObject;
     var deviceIdKey = 'id';
-
     var currentDeviceKey = 'frIndexedMultivalued2';
     var profileDevicesAttributeName = 'fr-attr-imulti2';
+
     var userId = sharedState.get('_id');
+    var profileDevices;
 
     try {
         currentDeviceObject = JSON.parse(sharedState.get(currentDeviceKey));
@@ -14,10 +15,8 @@
         logger.message('Error: the current device data cannot be parsed.');
     }
 
-    var profileDevices = idRepository.getAttribute(userId, profileDevicesAttributeName).toArray();
-
     if (currentDeviceObject) {
-        profileDevices = profileDevices.filter(function (profileDevice) {
+        profileDevices = idRepository.getAttribute(userId, profileDevicesAttributeName).toArray().filter(function (profileDevice) {
             var profileDeviceObject;
 
             try {
