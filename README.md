@@ -10,7 +10,6 @@ Supplemental examples to publicly available scripting resources, including:
 
 * [ForgeRock Access Management (AM)](#am)
     * [Scripted Decisions](#am-scripted-decisions)
-        * [Send Data (for example, a theme ID) to the Browser, and save it in `localStorage` with `ScriptTextOutputCallback`](#am-scripted-decisions-send-data-to-the-browser)
         * [Set a Theme with a Method of the `Action Interface`](#am-scripted-decisions-set-theme-withStage-Action-method)
         * [Get User Location from Their Postal or Physical Address and Save the Location Information in `sharedState`](#am-scripted-decisions-location-from-postal-or-physical-address)
         * [Get User Location from Their IP Address and Save the Location Information in `sharedState`](#am-scripted-decisions-location-from-ip-address)
@@ -37,69 +36,21 @@ Supplemental examples to publicly available scripting resources, including:
 
 [Back to Contents](#contents)
 
-* ### <a id="am-scripted-decisions-send-data-to-the-browser" name="am-scripted-decisions-send-data-to-the-browser"></a>Send Data (for example, a theme ID) to the Browser, and save it in `localStorage` with [ScriptTextOutputCallback](https://backstage.forgerock.com/docs/am/7.1/authentication-guide/authn-supported-callbacks.html#backchannel-callbacks)
-
-    [Back to Contents](#contents)
-
-    [Example Script](am/scripted-decision/src/set-localStorage-with-ScriptTextOutputCallback.js)
-
-    An object with a single key is sent to the browser as a part of a script to be run on the client side. The script will save each object entry as an item in browser `localStorage`.
-
-    In this instance, a (custom) theme name is saved in `localStorage`, so that the theme can be picked up by the Platform UI. Please see comments in the example script for further details.
-
-    > Saving theme _name_ in `localStorage` with a client-side script will not take immediate effect; the Platform UI will pick up the theme information and translate it into the theme ID for the next request, after the callback form is submitted. If you want the theme to applied to the callback screen, you could save a theme _ID_ in `localStorage`. You can get available themes with REST call; for example:
-    >
-    > ```javascript
-    > /**
-    >  * Run in the browser console.
-    >  */
-    >
-    > var requestOptions = {
-    >   method: 'GET'
-    > };
-    >
-    > fetch("https://openam-dx-kl02.forgeblocks.com/openidm/config/ui/themerealm", requestOptions)
-    >   .then(response => response.json())
-    >   .then(result => result.realm['alpha'].map(function (theme) {
-    >       console.log(theme.name, theme._id, theme.isDefault);
-    >   }))
-    >   .catch(error => console.log('error', error));
-    > ```
-    >
-    > Which will result in something like the following:
-    >
-    > ```
-    > Contrast ba2d64e1-f1dc-489f-b6d1-91a06c284778 false
-    > Highlander e0ec9eca-6b30-4b5e-b6e4-b25211a7e3f3 false
-    > Pink Sensations c3e70128-ea6a-49c1-9d37-97b4f2745e99 true
-    > Robroy bd5af604-f11b-4b16-b5e9-e40b8f267453 false
-    > Starter Theme b54477be-10ac-4c45-bb4a-ce6ec6d16610 false
-    > Zardoz 7349ff5d-cf42-43ab-9fc6-c3551b26ca8c false
-    > ```
-    >
-    > Then, in your scripted decision, you can send a theme ID to the client side, instead of its name:
-    >
-    > ```javascript
-    > // var themeNameOrId = 'Pink Sensations';
-    > var themeNameOrId = 'c3e70128-ea6a-49c1-9d37-97b4f2745e99';
-    > ```
-    >
-    > Note, however, that if you place your scripted decision in a Page Node instance, which has Stage setting, saving theme ID in localStorage will not take immediate effect, and will only apply to the next request, after the callback form is submitted.
-
-
 * ### <a id="am-scripted-decisions-set-theme-withStage-Action-method" name="am-scripted-decisions-set-theme-withStage-Action-method"></a>Set a Theme with a Method of the [Action Interface](https://backstage.forgerock.com/docs/am/7.1/auth-nodes/core-action.html)
 
     [Back to Contents](#contents)
 
     [Example Script](am/scripted-decision/src/set-theme-withStage-Action-method.js)
 
-    In a scripted decision callback screen, you can apply a theme using its name with immedeate effect by utilizing designated (but undocumented) [withStage](https://stash.forgerock.org/projects/OPENAM/repos/openam/browse/openam-auth-trees/auth-node-api/src/main/java/org/forgerock/openam/auth/node/api/Action.java#256) method of the Action Interface:
+    In Platform UI, you can apply a theme _dynamically_ from a scripted decision node by sending callbacks and using [withStage](https://stash.forgerock.org/projects/OPENAM/repos/openam/browse/openam-auth-trees/auth-node-api/src/main/java/org/forgerock/openam/auth/node/api/Action.java#256) method of the Action Interface:
 
     ```javascript
     action = javaImports.Action.send(
         javaImports.ScriptTextOutputCallback(script)
     ).withStage('themeId=' + themeNameOrId).build();
     ```
+
+    Note, however, that setting a theme this way will be overridden by specifying a theme for journey, as described in [Apply a custom theme to a Journey](https://backstage.forgerock.com/docs/idcloud/latest/uis/customize-enduser-login-uis.html#apply_a_custom_theme_to_a_journey).
 
     > You can find, update, or create a theme in the Platform Administrator under Hosted Pages. The theme name can serve as the theme ID in your scripted decision.
     >

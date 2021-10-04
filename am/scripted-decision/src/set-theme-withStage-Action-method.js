@@ -1,5 +1,5 @@
 /**
- * @file Set theme in Platform UI by sending the theme name to the browser with the withStage method of the Action interface.
+ * @file Set a default theme in the Platform UI by sending the theme name or ID to the browser with the withStage method of the Action interface.
  */
 
 /**
@@ -17,12 +17,7 @@
     );
 
     /**
-     * Provide a theme name.
-     * You don't have to provide a theme ID if you want the theme to be applied on the callback screen;
-     * using withStage method, the theme change will take effect immediately.
-     *
-     * Note, however, that if you use your scripted decision in a Page Node instance,
-     * which has the Stage setting, setting theme by using withStage will not work.
+     * Provide a theme name or ID.
      */
     var themeNameOrId = 'Pink Sensations';
     /**
@@ -33,7 +28,7 @@
     if (callbacks.isEmpty()) {
         /**
          * Send the callback(s) to the browser
-         * and provide theme information as an argument to withStage method.
+         * and provide theme information as an argument to the withStage method.
          */
         action = javaImports.Action.send(
             javaImports.ScriptTextOutputCallback(script)
