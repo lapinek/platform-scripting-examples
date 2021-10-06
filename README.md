@@ -197,6 +197,10 @@ Supplemental examples to publicly available scripting resources, including:
 
     [Back to Contents](#contents)
 
+    [Example Script](idm/custom-endpoint/custom-kba/src/custom-endpoint-script.js)
+
+    Continue reading for additional information and examples.
+
     #### <a id="idm-custom-endpoints-custom-kba-motivation" name="idm-custom-endpoints-custom-kba-motivation"></a>Motivation
 
     [Back to Contents](#contents)
