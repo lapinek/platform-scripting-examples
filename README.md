@@ -14,6 +14,7 @@ Supplemental examples to publicly available scripting resources, including:
         * [Get User Location from Their Postal or Physical Address and Save the Location Information in `sharedState`](#am-scripted-decisions-location-from-postal-or-physical-address)
         * [Get User Location from Their IP Address and Save the Location Information in `sharedState`](#am-scripted-decisions-location-from-ip-address)
         * [Set a Session Property Based on a Value Saved in `sharedState`](#am-scripted-decisions-set-session-property-from-sharedstate)
+        * [Enable 2-Step Verification in Identity Cloud with Preexisting Oath Devices Data Saved in a Custom Attribute](#am-scripted-decisions-set-oath-attributes)
 * [OIDC Claims](#am-oidc-claims)
     * [Saving AM User Session Information in a Custom Claim, and Resetting the Session Idle Timeout by Using the SSO Token](#am-oidc-claims-custom-session-claim)
         * [The Premise](#am-oidc-claims-custom-session-claim-premise)
@@ -83,6 +84,12 @@ Supplemental examples to publicly available scripting resources, including:
     [Back to Contents](#contents)
 
     [Example Script](am/scripted-decision/src/set-session-property.js)
+
+* ### <a id="am-scripted-decisions-set-oath-attributes" name="am-scripted-decisions-set-oath-attributes"></a>Enable 2-Step Verification in Identity Cloud with Preexisting Oath Devices Data Saved in a Custom Attribute
+
+    [Back to Contents](#contents)
+
+    [Example Script](am/scripted-decision/src/set-oath-attributes.js)
 
 ## <a id="am-oidc-claims" name="am-oidc-claims"></a>[OIDC Claims](https://backstage.forgerock.com/docs/am/7.1/oidc1-guide/scripted-oidc-claims.html)
 
