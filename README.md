@@ -183,6 +183,18 @@ Supplemental examples to publicly available scripting resources, including:
         }
         ```
 
+## <a id="am-browser" name="am-browser"></a>Scripts to Run in a Browser
+
+[Back to Contents](#contents)
+
+You need to sign in as AM administrator to run these scripts in the browser console.
+
+* ### <a id="am-browser-get-user-devices" name="am-browser-get-user-devices"></a>Get User Devices Associated with the Profile and Used for Multi-Factor Authentication
+
+    [Back to Contents](#contents)
+
+    [Example Script](am/browser/get-user-devices.js)
+
 ---
 
 ## <a id="idm" name="idm"></a>ForgeRock Identity Management (IDM)
