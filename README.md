@@ -16,12 +16,14 @@ Supplemental examples to publicly available scripting resources, including:
         * [Set a Session Property Based on a Value Saved in `sharedState`](#am-scripted-decisions-set-session-property-from-sharedstate)
         * [Set Multiple Session Properties](#am-scripted-decisions-set-session-properties)
         * [Enable 2-Step Verification in Identity Cloud with Preexisting Oath Devices Data Saved in a Custom Attribute](#am-scripted-decisions-set-oath-attributes)
-* [OIDC Claims](#am-oidc-claims)
-    * [Saving AM User Session Information in a Custom Claim, and Resetting the Session Idle Timeout by Using the SSO Token](#am-oidc-claims-custom-session-claim)
-        * [The Premise](#am-oidc-claims-custom-session-claim-premise)
-        * [Trusted Relying Party (RP)](#am-oidc-claims-custom-session-claim-trusted-rp)
-        * [Untrusted RP](#am-oidc-claims-custom-session-claim-untrusted-rp)
-        * [Example of an ID Token With Session Information](#am-oidc-claims-custom-session-claim-id-token-example)
+    * [OIDC Claims](#am-oidc-claims)
+        * [Saving AM User Session Information in a Custom Claim, and Resetting the Session Idle Timeout by Using the SSO Token](#am-oidc-claims-custom-session-claim)
+            * [The Premise](#am-oidc-claims-custom-session-claim-premise)
+            * [Trusted Relying Party (RP)](#am-oidc-claims-custom-session-claim-trusted-rp)
+            * [Untrusted RP](#am-oidc-claims-custom-session-claim-untrusted-rp)
+            * [Example of an ID Token With Session Information](#am-oidc-claims-custom-session-claim-id-token-example)
+    * [Scripts to Run in a Browser](#am-browser)
+        * [Get User Devices Associated with the Profile and Used for Multi-Factor Authentication](#am-browser-get-user-devices)
 * [ForgeRock Identity Management (IDM)](#idm)
     * [Custom Endpoints](#idm-custom-endpoints)
         * [Custom Implementation of Knowledge Based Authentication (KBA)](#idm-custom-endpoints-custom-kba)
@@ -201,7 +203,7 @@ You need to sign in as AM administrator to run these scripts in the browser cons
 
     [Back to Contents](#contents)
 
-    [Example Script](am/browser/get-user-devices.js)
+    [Example Script](am/browser/src/get-user-devices.js)
 
 ---
 
