@@ -1,5 +1,5 @@
 /**
- * @file Set multiple session properties
+ * @file Set dynamically (multiple) session properties
  * in a Scripted Decision Node script
  * in ForgeRock Access Management (AM).
  * @see {@link https://backstage.forgerock.com/docs/am/7.1/authentication-guide/scripting-api-node.html#scripting-api-node-sessionProperties}.
@@ -26,7 +26,8 @@
     try {
         /**
          * Get an instance of the ActionBuilder object
-         * by calling a static method of the Action Interface.
+         * by calling a static method of the Action interface.
+         * @see {@link https://backstage.forgerock.com/docs/am/7.1/apidocs/org/forgerock/openam/auth/node/api/Action.html}
          */
         var actionBuilder = javaImports.Action.goTo('true');
 
@@ -34,6 +35,7 @@
             /**
              * Use the corresponding ActionBuilder instance method
              * to add a custom property to the user session.
+             * @see {@link https://backstage.forgerock.com/docs/am/7.1/apidocs/org/forgerock/openam/auth/node/api/Action.ActionBuilder.html}
              */
             actionBuilder.putSessionProperty(sessionProperty.key, sessionProperty.value);
         });

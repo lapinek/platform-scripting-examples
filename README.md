@@ -85,11 +85,13 @@ Supplemental examples to publicly available scripting resources, including:
 
     [Example Script](am/scripted-decision/src/set-session-property.js)
 
-* ### <a id="am-scripted-decisions-set-session-properties" name="am-scripted-decisions-set-session-properties"></a>Set Multiple Session Properties
+* ### <a id="am-scripted-decisions-set-session-properties" name="am-scripted-decisions-set-session-properties"></a>Set Dynamically (Multiple) Session Properties
 
     [Back to Contents](#contents)
 
     [Example Script](am/scripted-decision/src/set-session-properties.js)
+
+    You can set the future session properties in a scripted decision dynamically by using methods of an [ActionBuilder](https://backstage.forgerock.com/docs/am/7.1/apidocs/org/forgerock/openam/auth/node/api/Action.ActionBuilder.html) instance returned by static methods of the [Action](https://backstage.forgerock.com/docs/am/7.1/apidocs/org/forgerock/openam/auth/node/api/Action.html) interface.
 
 * ### <a id="am-scripted-decisions-set-oath-attributes" name="am-scripted-decisions-set-oath-attributes"></a>Enable 2-Step Verification in Identity Cloud with Preexisting Oath Devices Data Saved in a Custom Attribute
 
