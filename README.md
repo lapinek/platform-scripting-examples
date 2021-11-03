@@ -14,6 +14,7 @@ Supplemental examples to publicly available scripting resources, including:
         * [Get User Location from Their Postal or Physical Address and Save the Location Information in `sharedState`](#am-scripted-decisions-location-from-postal-or-physical-address)
         * [Get User Location from Their IP Address and Save the Location Information in `sharedState`](#am-scripted-decisions-location-from-ip-address)
         * [Set a Session Property Based on a Value Saved in `sharedState`](#am-scripted-decisions-set-session-property-from-sharedstate)
+        * [Set Multiple Session Properties](#am-scripted-decisions-set-session-properties)
         * [Enable 2-Step Verification in Identity Cloud with Preexisting Oath Devices Data Saved in a Custom Attribute](#am-scripted-decisions-set-oath-attributes)
 * [OIDC Claims](#am-oidc-claims)
     * [Saving AM User Session Information in a Custom Claim, and Resetting the Session Idle Timeout by Using the SSO Token](#am-oidc-claims-custom-session-claim)
@@ -78,12 +79,17 @@ Supplemental examples to publicly available scripting resources, including:
 
     Otherwise, in an "on premise" installation, you'll need to obtain the client IP address with a script running in the browser. Accessing the request object in the scripted decision context is currently not an option.
 
-
 * ### <a id="am-scripted-decisions-set-session-property-from-sharedstate" name="am-scripted-decisions-set-session-property-from-sharedstate"></a>Set a Session Property Based on a Value Saved in `sharedState`
 
     [Back to Contents](#contents)
 
     [Example Script](am/scripted-decision/src/set-session-property.js)
+
+* ### <a id="am-scripted-decisions-set-session-properties" name="am-scripted-decisions-set-session-properties"></a>Set Multiple Session Properties
+
+    [Back to Contents](#contents)
+
+    [Example Script](am/scripted-decision/src/set-session-properties.js)
 
 * ### <a id="am-scripted-decisions-set-oath-attributes" name="am-scripted-decisions-set-oath-attributes"></a>Enable 2-Step Verification in Identity Cloud with Preexisting Oath Devices Data Saved in a Custom Attribute
 
@@ -105,7 +111,7 @@ Supplemental examples to publicly available scripting resources, including:
 
         [Back to Contents](#contents)
 
-        A third-party Relying Party (RP) might not be able to include the OpenID Provider (OP) cookies in requests made via the back channel. For example, including cookies in XHR requests from a different domain might be affected by the third-party cookies restrictions implemented in the browser, and for requests made from the server side a third-party application won't have access to the cookies set by the authorization server.
+        A third-party Relying Party (RP) might not be able to include the OpenID Provider (OP) cookies in requests made via the back channel. For example, including cookies in XHR requests from a different domain might be affected by the third-party cookies restrictions implemented in the browser; and for requests made from the server side, a third-party application won't have access to the cookies set by the authorization server.
 
         Therefore, maintaining a user session at the OP via the back channel, silently, may need to be implemented without reliance on the OP's session cookies.
 
