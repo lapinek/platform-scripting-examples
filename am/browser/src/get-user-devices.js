@@ -16,7 +16,8 @@ var paths = [
 ];
 
 paths.forEach((path) => {
-    fetch(`/am/json${realm}/users/${userId}/devices${path}?_queryId=*`
+    fetch(
+        `/am/json${realm}/users/${userId}/devices${path}?_queryId=*`
     ).then((response) => {
         return response.json();
     }).then((result) => {
