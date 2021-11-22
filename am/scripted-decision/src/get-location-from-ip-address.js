@@ -38,7 +38,7 @@
      * @param {string} options.ip The IP to geolocate.
      * @returns {LoginLocation|undefined} A JavaScript object containing the location information.
      */
-    function getLoginLocationFromIPAddress (options) {
+    function getLoginLocationFromIPAddress(options) {
         var request;
         var response;
         var loginLocation;
@@ -111,7 +111,7 @@
      * (or you'd need to have access to the request object, which is currently not an option in AM scripted decision context).
      * @returns {string|undefined}
      */
-    function getClientIPAddress () {
+    function getClientIPAddress() {
         var ip;
 
         var xForwardedFor = requestHeaders.get('x-forwarded-for');
