@@ -12,6 +12,7 @@ Supplemental examples to publicly available scripting resources, including:
     * [General](#am-general)
         * [Use Function Scope](#am-general-use-function-scope)
         * [Get Bindings](#am-general-get-bindings)
+        * [Base64 Encoding and Decoding](#am-general-base64)
     * [Scripted Decisions](#am-scripted-decisions)
         * [Set a Theme with a Method of the `Action Interface`](#am-scripted-decisions-set-theme-withStage-Action-method)
         * [Get User Location from Their Postal or Physical Address and Save the Location Information in `sharedState`](#am-scripted-decisions-location-from-postal-or-physical-address)
@@ -62,6 +63,17 @@ Supplemental examples to publicly available scripting resources, including:
     [Example Script](am/general/src/get-bindings.js)
 
     You can inspect the variables in the top-level Rhino scope in AM and, thus, see what bindings are provided in the current scripting context.
+
+* ### <a id="am-general-base64" name="am-general-base64"></a>Base64 Encoding and Decoding
+    [Back to Contents](#contents)
+
+    * #### Using the [org.forgerock.util.encode.Base64](https://backstage.forgerock.com/docs/am/7.1/apidocs/org/forgerock/util/encode/Base64.html) Class
+
+        Example script: [org.forgerock.util.encode.Base64.js](am/base64/src/org.forgerock.util.encode.Base64.js)
+
+    * #### Using a Custom JavaScript Object
+
+        Example script: [webtoolkit.base64.js](am/base64/src/webtoolkit.base64.js)
 
 ## <a id="am-scripted-decisions" name="am-scripted-decisions"></a>[Scripted Decisions](https://backstage.forgerock.com/docs/am/7.1/authentication-guide/scripting-api-node.html)
 
