@@ -9,6 +9,9 @@ Supplemental examples to publicly available scripting resources, including:
 ## <a id="contents" name="contents"></a>Contents
 
 * [ForgeRock Access Management (AM)](#am)
+    * [General](#am-general)
+        * [Use Function Scope](#am-general-use-function-scope)
+        * [Get Bindings](#am-general-get-bindings)
     * [Scripted Decisions](#am-scripted-decisions)
         * [Set a Theme with a Method of the `Action Interface`](#am-scripted-decisions-set-theme-withStage-Action-method)
         * [Get User Location from Their Postal or Physical Address and Save the Location Information in `sharedState`](#am-scripted-decisions-location-from-postal-or-physical-address)
@@ -35,6 +38,30 @@ Supplemental examples to publicly available scripting resources, including:
 ## <a id="am" name="am"></a>ForgeRock Access Management (AM)
 
 [Back to Contents](#contents)
+
+## <a id="am-general" name="am-general"></a>General
+
+[Back to Contents](#contents)
+
+* ### <a id="am-general-use-function-scope" name="am-general-use-function-scope"></a>Use Function Scope
+
+    [Back to Contents](#contents)
+
+    [Example Script](am/general/src/use-function-scope.js)
+
+    Write all your functionality in a function; you may start with an [Immediately Invoked Function Expression (IIFE)](https://developer.mozilla.org/en-US/docs/Glossary/IIFE).
+
+    Do NOT use the top-level Rhino scope in AM as it might produce unexpected behavior, particularly when assigning variables.
+
+    In addition, closing your variables in a function will separate them from bindings provided by AM scripting engine.
+
+* ### <a id="am-general-get-bindings" name="am-general-get-bindings"></a>Get Bindings
+
+    [Back to Contents](#contents)
+
+    [Example Script](am/general/src/get-bindings.js)
+
+    You can inspect the variables in the top-level Rhino scope in AM and, thus, see what bindings are provided in the current scripting context.
 
 ## <a id="am-scripted-decisions" name="am-scripted-decisions"></a>[Scripted Decisions](https://backstage.forgerock.com/docs/am/7.1/authentication-guide/scripting-api-node.html)
 
