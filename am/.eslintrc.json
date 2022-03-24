@@ -12,6 +12,7 @@
         "clientProperties": "readonly",
         "requestHeaders": "readonly",
         "identity": "readonly",
-        "scriptName": "readonly"
+        "scriptName": "readonly",
+        "nodeState": "readonly"
     }
 }

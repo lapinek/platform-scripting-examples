@@ -66,6 +66,7 @@
         "logger": "readonly",
         "com": "readonly",
         "javax": "readonly",
-        "java": "readonly"
+        "java": "readonly",
+        "print": "readonly"
     }
 }
