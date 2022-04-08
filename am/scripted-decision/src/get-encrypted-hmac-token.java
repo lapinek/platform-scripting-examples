@@ -1,6 +1,7 @@
 /**
  @file Use at https://www.mycompiler.io/new/java
  @example https://www.mycompiler.io/view/9yCkxS8q4AY
+ {@link https://github.com/afalahi/forgerock-scripts/blob/master/JourneyScripts/FR-ShopifyMultipass.js The corresponding scripted decision implementation. }
  */
 
 import java.util.*;
