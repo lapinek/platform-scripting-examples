@@ -13,6 +13,7 @@ Supplemental examples to publicly available scripting resources, including:
         * [Use Function Scope](#am-general-use-function-scope)
         * [Get Bindings](#am-general-get-bindings)
         * [Base64 Encoding and Decoding](#am-general-base64)
+        * [Parse XML to JavaScript Object](#am-general-parse-xml-to-js)
     * [Scripted Decisions](#am-scripted-decisions)
         * [Set a Theme with a Method of the `Action Interface`](#am-scripted-decisions-set-theme-withStage-Action-method)
         * [Get User Location from Their Postal or Physical Address and Save the Location Information in `sharedState`](#am-scripted-decisions-location-from-postal-or-physical-address)
@@ -75,6 +76,15 @@ Supplemental examples to publicly available scripting resources, including:
     * #### Using a Custom JavaScript Object
 
         Example script: [webtoolkit.base64.js](am/base64/src/webtoolkit.base64.js)
+
+* ### <a id="am-general-parse-xml-to-js" name="am-general-parse-xml-to-js"></a>Parse XML to JavaScript Object
+    [Back to Contents](#contents)
+
+    * [Example script](am/general/src/parse-xml-to-js.js)
+
+    * [String.prototype.matchAll() Polyfill](am/general/src/polyfill.String.prototype.matchAll.js) used in the example
+
+        Currently, a `String.prototype.matchAll()` polyfill is required in AM.
 
 ## <a id="am-scripted-decisions" name="am-scripted-decisions"></a>[Scripted Decisions](https://backstage.forgerock.com/docs/am/7.1/authentication-guide/scripting-api-node.html)
 
