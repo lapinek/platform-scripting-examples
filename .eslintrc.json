@@ -57,7 +57,6 @@
         "spaced-comment": "error",
         "comma-spacing": "error",
         "camelcase": "error",
-        "eol-last": "error",
         "no-use-before-define": "error"
     },
     "globals": {

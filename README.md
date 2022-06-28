@@ -28,6 +28,7 @@ Supplemental examples to publicly available scripting resources, including:
             * [Example of an ID Token With Session Information](#am-oidc-claims-custom-session-claim-id-token-example)
     * [Scripts to Run in a Browser](#am-browser)
         * [Get User Devices Associated with the Profile and Used for Multi-Factor Authentication](#am-browser-get-user-devices)
+        * [Get Scripting Engine Configuration(s) from Your ForgeRock Identity Cloud Tenant Global Config](#am-browser-get-scripting-engine-configurations)
 * [ForgeRock Identity Management (IDM)](#idm)
     * [Custom Endpoints](#idm-custom-endpoints)
         * [Custom Implementation of Knowledge Based Authentication (KBA)](#idm-custom-endpoints-custom-kba)
@@ -236,13 +237,19 @@ Supplemental examples to publicly available scripting resources, including:
 
 [Back to Contents](#contents)
 
-You need to sign in as AM administrator to run these scripts in the browser console.
+Run this script in any administrative browser console—AM, IDM, or Platform.
 
 * ### <a id="am-browser-get-user-devices" name="am-browser-get-user-devices"></a>Get User Devices Associated with the Profile and Used for Multi-Factor Authentication
 
     [Back to Contents](#contents)
 
     [Example Script](am/browser/src/get-user-devices.js)
+
+* ### <a id="am-browser-get-scripting-engine-configurations" name="am-browser-get-scripting-engine-configurations"></a>Get Scripting Engine Configuration(s) from Your ForgeRock Identity Cloud Tenant Global Config
+
+    [Back to Contents](#contents)
+
+    [Example Script](am/browser/src/get-scripting-engine-configurations.js)
 
 ---
 
