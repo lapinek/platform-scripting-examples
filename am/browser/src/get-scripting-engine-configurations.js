@@ -62,10 +62,15 @@
 
         /**
          * Check if a class is present in the allowed Java.
+         * If `undefined` is returned, it means the class was not found.
          */
         console.log(scriptingEngineConfiguration.whiteList.find((className) => {
             return className.indexOf('Saml2SsoResponseUtils') !== -1;
         }));
-    });
 
+        /**
+         * Output the entire allowed Java list.
+         */
+        console.log(scriptingEngineConfiguration.whiteList);
+    });
 }());
