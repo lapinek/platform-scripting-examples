@@ -1,7 +1,16 @@
 /**
- * @file Request AM scripting engine configuration(s) over REST using IDM Admin browser console.
+ * @file Request AM scripting engine configuration(s) over REST using ForgeRock Platform Admin browser console.
  * @author Konstantin Lapine <konstantin.lapine@forgerock.com>
  */
+
+/**
+ * @todo Sign in the Platform admin UI.
+ * @todo Copy and paste the content of this file into your browser console.
+ * @todo Specify search criteria.
+ * @example
+ * const classNamePart = 'TimeZone';
+ */
+var classNamePart = '<string-to-find-in-allowed-classes>';
 
 (async function () {
     /**
@@ -9,11 +18,6 @@
      * @returns {array}
      */
     async function getScriptingEngineConfigurations() {
-        /**
-         * Provide your tenant origin.
-         */
-        var tenantOrigin = 'https://openam-dx-kl.forgeblocks.com';
-
         /**
          * Comment out types you are not interested in (at the moment).
          */
@@ -33,7 +37,7 @@
         var scriptingEngineConfigurations = [];
 
         for (var scriptType of scriptTypes) {
-            var scriptingEngineConfigurationResponse = await fetch(`${tenantOrigin}/am/json/global-config/services/scripting/contexts/${scriptType}/engineConfiguration`);
+            var scriptingEngineConfigurationResponse = await fetch(`${location.origin}/am/json/global-config/services/scripting/contexts/${scriptType}/engineConfiguration`);
 
             var scriptingEngineConfiguration = await scriptingEngineConfigurationResponse.json();
             scriptingEngineConfiguration.name = scriptingEngineConfigurationResponse.url.split('/').at(-2);
@@ -61,16 +65,16 @@
         // Examples:
 
         /**
-         * Check if a class is present in the allowed Java.
-         * If `undefined` is returned, it means the class was not found.
-         */
-        console.log(scriptingEngineConfiguration.whiteList.find((className) => {
-            return className.indexOf('Saml2SsoResponseUtils') !== -1;
-        }));
-
-        /**
          * Output the entire allowed Java list.
          */
-        console.log(scriptingEngineConfiguration.whiteList);
+        console.log('Full List of Allowed Classes:', scriptingEngineConfiguration.whiteList);
+
+        /**
+         * Check if a class name is present in the allowed Java.
+         * If an empty array is returned, it means the class was not found.
+         */
+        console.log(`Found "${classNamePart}" occurrences in Allowed Classes:`, scriptingEngineConfiguration.whiteList.filter((className) => {
+            return className.indexOf(classNamePart) !== -1;
+        }));
     });
 }());
