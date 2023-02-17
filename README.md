@@ -35,6 +35,8 @@ Supplemental examples to publicly available scripting resources, including:
         * [Custom Implementation of Knowledge Based Authentication (KBA)](#idm-custom-endpoints-custom-kba)
             * [Motivation](#idm-custom-endpoints-custom-kba-motivation)
             * [Custom Endpoint](#idm-custom-endpoints-custom-kba-custom-endpoint)
+* [ForgeRock Identity Platform and Identity Cloud](#platform)
+    * [Backup Realm Configuration with FRODO CLI](#platform-frodo-cli-backup-realm)
 
 ---
 
@@ -429,5 +431,20 @@ Run this script in any administrative browser console—AM, IDM, or Platform.
 
         <img src="README_files/kba-verification-node.png" alt="KBA Verification Node with three questions" width="512">
 
+## <a id="platform" name="platform"></a>ForgeRock Identity Platform and Identity Cloud
 
+[Back to Contents](#contents)
 
+* <a id="platform-frodo-cli-backup-realm" name="platform-frodo-cli-backup-realm"></a>Backup Realm Configuration with [FRODO CLI](https://github.com/rockcarver/frodo-cli#quick-start)
+
+    [Back to Contents](#contents)
+
+    An example shell script that saves major realm configuration components:
+
+    [Example Script](platform/src/frodo-backup-realm-configuration.sh)
+
+    Example call:
+
+    ```
+    $ ENVIRONMENT=kl03; REALM=alpha; /path/to/frodo-backup-realm-configuration.sh $ENVIRONMENT $REALM;
+    ```
