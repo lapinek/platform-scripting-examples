@@ -4,7 +4,7 @@ Supplemental examples to publicly available scripting resources, including:
 * [Official Documentation](https://backstage.forgerock.com/docs/)
 * [Knowledge Base](https://backstage.forgerock.com/knowledge/search?q=scripting)
 * [ForgeRock Community](https://forgerock.connectedcommunity.org/search?executeSearch=true&SearchTerm=scripting&l=1)
-* [Notes on Scripting in ForgeRock Access Management (AM)](https://developer.forgerock.com/docs/platform/how-tos/notes-scripting-forgerock-access-management-am-70)
+* [Notes on Scripting in ForgeRock Access Management (AM)](https://community.forgerock.com/t/notes-on-scripting-in-forgerock-access-management-am-7-0/)
 
 ## <a id="contents" name="contents"></a>Contents
 
