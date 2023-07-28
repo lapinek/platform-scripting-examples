@@ -21,6 +21,7 @@ Supplemental examples to publicly available scripting resources, including:
         * [Set a Session Property Based on a Value Saved in `sharedState`](#am-scripted-decisions-set-session-property-from-sharedstate)
         * [Set Multiple Session Properties](#am-scripted-decisions-set-session-properties)
         * [Enable 2-Step Verification in Identity Cloud with Preexisting Oath Devices Data Saved in a Custom Attribute](#am-scripted-decisions-set-oath-attributes)
+        * [Resend HTTP Request](#resend-http-request)
     * [OIDC Claims](#am-oidc-claims)
         * [Saving AM User Session Information in a Custom Claim, and Resetting the Session Idle Timeout by Using the SSO Token](#am-oidc-claims-custom-session-claim)
             * [The Premise](#am-oidc-claims-custom-session-claim-premise)
@@ -152,6 +153,22 @@ Supplemental examples to publicly available scripting resources, including:
     [Back to Contents](#contents)
 
     [Example Script](am/scripted-decision/src/set-oath-attributes.js)
+
+* ### <a id="resend-http-request" name="resend-http-request"></a> Resend HTTP Request
+
+    [Back to Contents](#contents)
+
+    In a scripted decision, you can use the [httpClient](https://backstage.forgerock.com/docs/am/7.3/authentication-guide/scripting-api-node.html#scripted-decision-node-bindings) binding for making an outbound HTTP request. The binding's [.send(Request request)](https://backstage.forgerock.com/docs/am/7.3/_attachments/apidocs/org/forgerock/http/Client.html#send(org.forgerock.http.protocol.Request)) method returns a [Promise](https://backstage.forgerock.com/docs/am/7.3/_attachments/apidocs/org/forgerock/util/promise/Promise.html). You can make the script wait for the promise to be resolved by using one of its `.get` methods. Alternatively, you can leave the promise to be resolved independently of the script execution with a `.then` method.
+
+    If you use the [.get()](https://backstage.forgerock.com/docs/am/7.3/_attachments/apidocs/org/forgerock/util/promise/PromiseImpl.html#get()) method, the scripted decision will wait for the promise to be resolved with the default timeout of 10 seconds and then continue to execute.
+
+    Using the [.get(long timeout, TimeUnit unit)](https://backstage.forgerock.com/docs/am/7.3/_attachments/apidocs/org/forgerock/util/promise/Promise.html#get(long,java.util.concurrent.TimeUnit)) allows to specify a custom timeout. This will require the `java.util.concurrent.TimeUnit` class to be added to the allowed Java in AM, as described in this [KB article](https://backstage.forgerock.com/knowledge/kb/article/a44542794). Doing so is an option in self-managed environments, such as "on-premises" one or [ForgeOps](https://backstage.forgerock.com/docs/forgeops/7.3/index.html), but the class is not _currently_ a part of the allowed Java in ForgeRock Identity Cloud.
+
+    Whether the default or a custom timeout is used in the promise, it is possible that the request will _intermittently_ fail. The example scripts referenced below allow for making a specified number of subsequent requests in case the previous request times out.
+
+    [Example Script - Default Timeout](am/scripted-decision/src/resend-http-request.js)
+
+    [Example Script - Custom Timeout](am/scripted-decision/src/resend-http-request-custom-timeout.js)
 
 ## <a id="am-oidc-claims" name="am-oidc-claims"></a>[OIDC Claims](https://backstage.forgerock.com/docs/am/7.1/oidc1-guide/scripted-oidc-claims.html)
 
