@@ -62,7 +62,7 @@
     "globals": {
         "JavaImporter": "readonly",
         "org": "readonly",
-        "logger": "readonly",
+        "logger": "writable",
         "com": "readonly",
         "javax": "readonly",
         "java": "readonly",
