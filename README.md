@@ -36,6 +36,7 @@ Supplemental examples to publicly available scripting resources, including:
         * [Custom Implementation of Knowledge Based Authentication (KBA)](#idm-custom-endpoints-custom-kba)
             * [Motivation](#idm-custom-endpoints-custom-kba-motivation)
             * [Custom Endpoint](#idm-custom-endpoints-custom-kba-custom-endpoint)
+    * [Update Mappings via REST](#idm-mappings)
 * [ForgeRock Identity Platform and Identity Cloud](#platform)
     * [Backup Realm Configuration with FRODO CLI](#platform-frodo-cli-backup-realm)
 
@@ -447,6 +448,12 @@ Run this script in any administrative browser console—AM, IDM, or Platform.
     * Optionally, when the standard KBA property has been populated for all users, use the out of the box KBA nodes to validate user's answers.
 
         <img src="README_files/kba-verification-node.png" alt="KBA Verification Node with three questions" width="512">
+
+* ### <a id="idm-mappings" name="idm-mappings"></a>Update Mappings via REST
+
+    [Back to Contents](#contents)
+
+    [Example Script](idm/browser/mappings-examples/update-mappings.js)
 
 ## <a id="platform" name="platform"></a>ForgeRock Identity Platform and Identity Cloud
 
