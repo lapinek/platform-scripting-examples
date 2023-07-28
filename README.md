@@ -20,7 +20,7 @@ Supplemental examples to publicly available scripting resources, including:
         * [Get User Location from Their IP Address and Save the Location Information in `sharedState`](#am-scripted-decisions-location-from-ip-address)
         * [Set a Session Property Based on a Value Saved in `sharedState`](#am-scripted-decisions-set-session-property-from-sharedstate)
         * [Set Multiple Session Properties](#am-scripted-decisions-set-session-properties)
-        * [Enable 2-Step Verification in Identity Cloud with Preexisting Oath Devices Data Saved in a Custom Attribute](#am-scripted-decisions-set-oath-attributes)
+        * [Enable 2-Step Verification in Identity Cloud with Pre-existing Oath Devices Data Saved in a Custom Attribute](#am-scripted-decisions-set-oath-attributes)
         * [Resend HTTP Request](#resend-http-request)
     * [OIDC Claims](#am-oidc-claims)
         * [Saving AM User Session Information in a Custom Claim, and Resetting the Session Idle Timeout by Using the SSO Token](#am-oidc-claims-custom-session-claim)
@@ -148,7 +148,7 @@ Supplemental examples to publicly available scripting resources, including:
 
     You can set the future session properties in a scripted decision dynamically by using methods of an [ActionBuilder](https://backstage.forgerock.com/docs/am/7.1/apidocs/org/forgerock/openam/auth/node/api/Action.ActionBuilder.html) instance returned by static methods of the [Action](https://backstage.forgerock.com/docs/am/7.1/apidocs/org/forgerock/openam/auth/node/api/Action.html) interface.
 
-* ### <a id="am-scripted-decisions-set-oath-attributes" name="am-scripted-decisions-set-oath-attributes"></a>Enable 2-Step Verification in Identity Cloud with Preexisting Oath Devices Data Saved in a Custom Attribute
+* ### <a id="am-scripted-decisions-set-oath-attributes" name="am-scripted-decisions-set-oath-attributes"></a>Enable 2-Step Verification in Identity Cloud with Pre-existing Oath Devices Data Saved in a Custom Attribute
 
     [Back to Contents](#contents)
 
